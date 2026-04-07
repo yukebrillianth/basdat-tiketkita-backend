@@ -18,10 +18,14 @@ export interface User {
   password_hash: string;
   role: UserRole;
   is_verified: boolean;
+  verification_code: string | null;
+  verification_code_expires_at: Date | null;
+  reset_code: string | null;
+  reset_code_expires_at: Date | null;
   created_at: Date;
   updated_at: Date;
 }
-export type SafeUser = Omit<User, "password_hash">;
+export type SafeUser = Omit<User, "password_hash" | "verification_code" | "verification_code_expires_at" | "reset_code" | "reset_code_expires_at">;
 
 export interface Category {
   id: string;
@@ -173,4 +177,27 @@ export interface PaginatedResult<T> {
 export interface JwtPayload {
   id: string;
   role: UserRole;
+}
+
+// ── Auth DTOs ────────────────────────────────────────────────
+export interface RegisterDTO {
+  fullname: string;
+  email: string;
+  phone?: string;
+  password: string;
+}
+export interface LoginDTO {
+  email: string;
+  password: string;
+}
+export interface VerifyEmailDTO {
+  email: string;
+  code: string;
+}
+export interface ResendVerificationDTO {
+  email: string;
+}
+export interface AuthResponse {
+  user: SafeUser;
+  token: string;
 }

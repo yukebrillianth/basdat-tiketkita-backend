@@ -1,0 +1,98 @@
+@base = http://localhost:3000/api
+@email = user@example.com
+@fullname = John Doe
+@password = Password123
+@phone = 081234567890
+@code = 123456
+
+### Register user baru
+POST {{base}}/auth/register
+Content-Type: application/json
+
+{
+  "fullname": "{{fullname}}",
+  "email": "{{email}}",
+  "phone": "{{phone}}",
+  "password": "{{password}}"
+}
+
+### Login
+POST {{base}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+### Verifikasi email
+POST {{base}}/auth/verify-email
+Content-Type: application/json
+
+{
+  "email": "{{email}}",
+  "code": "{{code}}"
+}
+
+### Kirim ulang kode verifikasi
+POST {{base}}/auth/resend-verification
+Content-Type: application/json
+
+{
+  "email": "{{email}}"
+}
+
+### Forgot password
+POST {{base}}/auth/forgot-password
+Content-Type: application/json
+
+{
+  "email": "{{email}}"
+}
+
+### Reset password
+POST {{base}}/auth/reset-password
+Content-Type: application/json
+
+{
+  "email": "{{email}}",
+  "code": "{{code}}",
+  "password": "NewPassword123"
+}
+
+### Get profil sendiri (butuh token dari login)
+# @name loginRequest
+POST {{base}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{email}}",
+  "password": "NewPassword123"
+}
+
+###
+@token = {{loginRequest.response.body.data.token}}
+
+GET {{base}}/auth/me
+Authorization: Bearer {{token}}
+
+### Test validasi gagal — register tanpa field required
+POST {{base}}/auth/register
+Content-Type: application/json
+
+{
+  "fullname": ""
+}
+
+### Test login salah
+POST {{base}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{email}}",
+  "password": "wrongpassword"
+}
+
+### Test token tidak valid
+GET {{base}}/auth/me
+Authorization: Bearer tokenpalsu

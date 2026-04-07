@@ -1,18 +1,18 @@
-import express, { Application } from "express";
 import cors from "cors";
+import express, { Application } from "express";
+import rateLimit from "express-rate-limit";
 import helmet from "helmet";
 import morgan from "morgan";
-import rateLimit from "express-rate-limit";
 
 import { errorHandler } from "./middleware/errorHandler";
 import authRoutes from "./modules/auth/auth.routes";
+import categoryRoutes from "./modules/categories/category.routes";
 import eventRoutes from "./modules/events/event.routes";
-import ticketRoutes from "./modules/tickets/ticket.routes";
 import orderRoutes from "./modules/orders/order.routes";
+import paymentMethodRoutes from "./modules/payment-methods/paymentMethod.routes";
 import paymentRoutes from "./modules/payments/payment.routes";
 import promoCodeRoutes from "./modules/promo-codes/promoCode.routes";
-import paymentMethodRoutes from "./modules/payment-methods/paymentMethod.routes";
-import categoryRoutes from "./modules/categories/category.routes";
+import ticketRoutes from "./modules/tickets/ticket.routes";
 import venueRoutes from "./modules/venues/venue.routes";
 import wishlistRoutes from "./modules/wishlist/wishlist.routes";
 
@@ -43,5 +43,10 @@ app.use("/api/venues", venueRoutes);
 app.use("/api/wishlist", wishlistRoutes);
 
 app.use(errorHandler);
+
+// 404 handler
+app.use((req, res, next) => {
+  res.status(404).json({ message: "Endpoint tidak ditemukan" });
+});
 
 export default app;
