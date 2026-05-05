@@ -30,6 +30,26 @@ export const verifyToken = async (
   }
 };
 
+export const optionalAuth = async (
+  req: Request,
+  _res: Response,
+  next: NextFunction,
+) => {
+  const token = req.headers.authorization?.split(" ")[1];
+  if (!token) return next();
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
+    const user = await userRepo.findById(decoded.id);
+    if (user) {
+      const { password_hash, ...safeUser } = user;
+      req.user = safeUser;
+    }
+  } catch {
+    // Token invalid — treat as unauthenticated, continue without user
+  }
+  next();
+};
+
 export const requireAdmin = (
   req: Request,
   res: Response,

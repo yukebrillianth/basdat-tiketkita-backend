@@ -2,22 +2,83 @@ import pool from "../../config/database";
 import { RowDataPacket, ResultSetHeader } from "mysql2";
 import { Venue } from "../../types";
 
-export const findAll = async (page: number, limit: number) => {
-  return { items: [], total: 0 };
+export const findAll = async (): Promise<Venue[]> => {
+  const [rows] = await pool.execute<(Venue & RowDataPacket)[]>(
+    "SELECT * FROM venues ORDER BY name ASC",
+  );
+  return rows;
 };
 
 export const findById = async (id: string): Promise<Venue | null> => {
-  return null;
+  const [rows] = await pool.execute<(Venue & RowDataPacket)[]>(
+    "SELECT * FROM venues WHERE id = ?",
+    [id],
+  );
+  return rows[0] ?? null;
 };
 
-export const create = async (data: Partial<Venue>): Promise<string> => {
-  return "";
+interface CreateVenueData {
+  id: string;
+  name: string;
+  city: string;
+  address: string;
+  capacity: number;
+}
+
+export const create = async (data: CreateVenueData): Promise<void> => {
+  await pool.execute<ResultSetHeader>(
+    "INSERT INTO venues (id, name, city, address, capacity) VALUES (?, ?, ?, ?, ?)",
+    [data.id, data.name, data.city, data.address, data.capacity],
+  );
 };
 
-export const update = async (id: string, data: Partial<Venue>): Promise<boolean> => {
-  return false;
+interface UpdateVenueData {
+  name?: string;
+  city?: string;
+  address?: string;
+  capacity?: number;
+}
+
+export const update = async (
+  id: string,
+  data: UpdateVenueData,
+): Promise<boolean> => {
+  const fields: string[] = [];
+  const values: (string | number)[] = [];
+
+  if (data.name !== undefined) {
+    fields.push("name = ?");
+    values.push(data.name);
+  }
+  if (data.city !== undefined) {
+    fields.push("city = ?");
+    values.push(data.city);
+  }
+  if (data.address !== undefined) {
+    fields.push("address = ?");
+    values.push(data.address);
+  }
+  if (data.capacity !== undefined) {
+    fields.push("capacity = ?");
+    values.push(data.capacity);
+  }
+
+  if (fields.length === 0) return false;
+
+  values.push(id);
+
+  const [result] = await pool.execute<ResultSetHeader>(
+    `UPDATE venues SET ${fields.join(", ")} WHERE id = ?`,
+    values,
+  );
+
+  return result.affectedRows > 0;
 };
 
 export const remove = async (id: string): Promise<boolean> => {
-  return false;
+  const [result] = await pool.execute<ResultSetHeader>(
+    "DELETE FROM venues WHERE id = ?",
+    [id],
+  );
+  return result.affectedRows > 0;
 };

@@ -1,0 +1,211 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2025-04-07T07:00:00.000Z",
+  "__export_source": "insomnia.rest",
+  "resources": [
+    {
+      "_id": "wrk_tiketkita_auth",
+      "_type": "workspace",
+      "name": "TiketKita - Auth",
+      "description": "Auth module endpoints for TiketKita API"
+    },
+    {
+      "_id": "env_tiketkita",
+      "_type": "environment",
+      "parentId": "wrk_tiketkita_auth",
+      "name": "Environment",
+      "data": {
+        "base_url": "http://localhost:3000/api",
+        "email": "yukebrilliant@gmail.com",
+        "fullname": "Yuke Sigma",
+        "password": "Password123",
+        "phone": "085755773985",
+        "code": "123456",
+        "token": ""
+      }
+    },
+    {
+      "_id": "req_register",
+      "_type": "request",
+      "parentId": "wrk_tiketkita_auth",
+      "name": "Register",
+      "method": "POST",
+      "url": "{{ base_url }}/auth/register",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"fullname\": \"{{ fullname }}\",\n  \"email\": \"{{ email }}\",\n  \"phone\": \"{{ phone }}\",\n  \"password\": \"{{ password }}\"\n}"
+      },
+      "description": "Register user baru. Mengirim OTP ke email."
+    },
+    {
+      "_id": "req_login",
+      "_type": "request",
+      "parentId": "wrk_tiketkita_auth",
+      "name": "Login",
+      "method": "POST",
+      "url": "{{ base_url }}/auth/login",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"email\": \"{{ email }}\",\n  \"password\": \"{{ password }}\"\n}"
+      },
+      "description": "Login. Response berisi user dan token JWT."
+    },
+    {
+      "_id": "req_verify_email",
+      "_type": "request",
+      "parentId": "wrk_tiketkita_auth",
+      "name": "Verify Email",
+      "method": "POST",
+      "url": "{{ base_url }}/auth/verify-email",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"email\": \"{{ email }}\",\n  \"code\": \"{{ code }}\"\n}"
+      },
+      "description": "Verifikasi email dengan kode OTP 6 digit."
+    },
+    {
+      "_id": "req_resend_verification",
+      "_type": "request",
+      "parentId": "wrk_tiketkita_auth",
+      "name": "Resend Verification",
+      "method": "POST",
+      "url": "{{ base_url }}/auth/resend-verification",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"email\": \"{{ email }}\"\n}"
+      },
+      "description": "Kirim ulang kode verifikasi ke email."
+    },
+    {
+      "_id": "req_forgot_password",
+      "_type": "request",
+      "parentId": "wrk_tiketkita_auth",
+      "name": "Forgot Password",
+      "method": "POST",
+      "url": "{{ base_url }}/auth/forgot-password",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"email\": \"{{ email }}\"\n}"
+      },
+      "description": "Request reset password. Mengirim kode OTP ke email."
+    },
+    {
+      "_id": "req_reset_password",
+      "_type": "request",
+      "parentId": "wrk_tiketkita_auth",
+      "name": "Reset Password",
+      "method": "POST",
+      "url": "{{ base_url }}/auth/reset-password",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"email\": \"{{ email }}\",\n  \"code\": \"{{ code }}\",\n  \"password\": \"NewPassword123\"\n}"
+      },
+      "description": "Reset password dengan kode OTP."
+    },
+    {
+      "_id": "req_me",
+      "_type": "request",
+      "parentId": "wrk_tiketkita_auth",
+      "name": "Get Profile",
+      "method": "GET",
+      "url": "{{ base_url }}/auth/me",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        }
+      ],
+      "description": "Get profil user yang sedang login."
+    },
+    {
+      "_id": "req_login_invalid",
+      "_type": "request",
+      "parentId": "wrk_tiketkita_auth",
+      "name": "[Test] Login Salah",
+      "method": "POST",
+      "url": "{{ base_url }}/auth/login",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"email\": \"{{ email }}\",\n  \"password\": \"wrongpassword\"\n}"
+      },
+      "description": "Test: login dengan password salah. Response 401."
+    },
+    {
+      "_id": "req_register_invalid",
+      "_type": "request",
+      "parentId": "wrk_tiketkita_auth",
+      "name": "[Test] Register Invalid",
+      "method": "POST",
+      "url": "{{ base_url }}/auth/register",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"fullname\": \"\"\n}"
+      },
+      "description": "Test: validasi gagal. Response 400 dengan field errors."
+    },
+    {
+      "_id": "req_unauthorized",
+      "_type": "request",
+      "parentId": "wrk_tiketkita_auth",
+      "name": "[Test] Token Tidak Valid",
+      "method": "GET",
+      "url": "{{ base_url }}/auth/me",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer tokenpalsu"
+        }
+      ],
+      "description": "Test: akses endpoint protected tanpa token valid. Response 401."
+    }
+  ]
+}

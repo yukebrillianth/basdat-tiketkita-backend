@@ -1,41 +1,41 @@
 import { Request, Response, NextFunction } from "express";
+import * as ticketService from "./ticket.service";
 import { success } from "../../utils/response";
 
-export const getAll = async (req: Request, res: Response, next: NextFunction) => {
+export const getAll = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
-    success(res, { message: "Endpoint coming soon" });
+    const data = await ticketService.getAllByEvent(String(req.params.eventId));
+    success(res, data);
   } catch (err) {
     next(err);
   }
 };
 
-export const getById = async (req: Request, res: Response, next: NextFunction) => {
+export const create = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
-    success(res, { message: "Endpoint coming soon" });
+    const data = await ticketService.create(String(req.params.eventId), req.body);
+    success(res, data, "Tipe tiket berhasil dibuat", 201);
   } catch (err) {
     next(err);
   }
 };
 
-export const create = async (req: Request, res: Response, next: NextFunction) => {
+export const update = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
-    success(res, { message: "Endpoint coming soon" });
-  } catch (err) {
-    next(err);
-  }
-};
-
-export const update = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    success(res, { message: "Endpoint coming soon" });
-  } catch (err) {
-    next(err);
-  }
-};
-
-export const remove = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    success(res, { message: "Endpoint coming soon" });
+    const data = await ticketService.update(String(req.params.eventId), String(req.params.id), req.body);
+    success(res, data, "Tipe tiket berhasil diupdate");
   } catch (err) {
     next(err);
   }
