@@ -6,6 +6,8 @@ interface EventWithDetails extends Event {
   category_name: string;
   venue_name: string;
   venue_city: string;
+  tickets_sold: number;
+  total_revenue: number;
 }
 
 interface EventDetail extends Event {
@@ -65,12 +67,24 @@ export const findAll = async (
   const total = countRows[0].total;
 
   const [rows] = await pool.execute<(EventWithDetails & RowDataPacket)[]>(
-    `SELECT e.*, c.name AS category_name, v.name AS venue_name, v.city AS venue_city
+    `SELECT e.*, c.name AS category_name, v.name AS venue_name, v.city AS venue_city,
+            COALESCE(sold.tickets_sold, 0) AS tickets_sold,
+            COALESCE(sold.total_revenue, 0) AS total_revenue
      FROM events e
      JOIN categories c ON c.id = e.category_id
      JOIN venues v ON v.id = e.venue_id
+     LEFT JOIN (
+       SELECT tt.event_id,
+              SUM(oi.quantity) AS tickets_sold,
+              SUM(oi.subtotal) AS total_revenue
+       FROM order_items oi
+       JOIN ticket_types tt ON tt.id = oi.ticket_type_id
+       JOIN orders o ON o.id = oi.order_id
+       WHERE o.status = 'paid'
+       GROUP BY tt.event_id
+     ) sold ON sold.event_id = e.id
      ${whereClause}
-     ORDER BY e.date_start ASC
+     ORDER BY e.date_start DESC
      LIMIT ? OFFSET ?`,
     [...values, String(limit), String(offset)],
   );

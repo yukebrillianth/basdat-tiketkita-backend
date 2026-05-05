@@ -9,6 +9,7 @@ import openApiSpec from "./docs/openapi";
 import { errorHandler } from "./middleware/errorHandler";
 import authRoutes from "./modules/auth/auth.routes";
 import categoryRoutes from "./modules/categories/category.routes";
+import dashboardRoutes from "./modules/dashboard/dashboard.routes";
 import eventRoutes from "./modules/events/event.routes";
 import orderRoutes from "./modules/orders/order.routes";
 import paymentMethodRoutes from "./modules/payment-methods/paymentMethod.routes";
@@ -55,6 +56,7 @@ const limiter = rateLimit({
 app.use("/api", limiter);
 
 app.use("/api/auth", authRoutes);
+app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/events", eventRoutes);
 app.use("/api/events/:eventId/tickets", ticketRoutes);
 app.use("/api/orders", orderRoutes);

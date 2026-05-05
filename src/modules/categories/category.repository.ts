@@ -2,9 +2,17 @@ import pool from "../../config/database";
 import { RowDataPacket, ResultSetHeader } from "mysql2";
 import { Category } from "../../types";
 
-export const findAll = async (): Promise<Category[]> => {
-  const [rows] = await pool.execute<(Category & RowDataPacket)[]>(
-    "SELECT * FROM categories ORDER BY name ASC",
+interface CategoryWithStats extends Category {
+  events_count: number;
+}
+
+export const findAll = async (): Promise<CategoryWithStats[]> => {
+  const [rows] = await pool.execute<(CategoryWithStats & RowDataPacket)[]>(
+    `SELECT c.*, COUNT(e.id) AS events_count
+     FROM categories c
+     LEFT JOIN events e ON e.category_id = c.id AND e.deleted_at IS NULL
+     GROUP BY c.id
+     ORDER BY c.name ASC`,
   );
   return rows;
 };
